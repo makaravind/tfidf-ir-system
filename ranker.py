@@ -51,17 +51,24 @@ class Ranker:
     def tf_query(self, query: list[str]):
         qtf = [0] * len(self.vocabulary)
         for query_term in query:
-            index_in_vocabulary = self.vocabulary.index(query_term)
-            qtf[index_in_vocabulary] += 1
+            try:
+                index_in_vocabulary = self.vocabulary.index(query_term)
+                qtf[index_in_vocabulary] += 1
+            except ValueError:
+                # Fails if the query term is not present in the vocabulary
+                pass
         return pd.DataFrame({'query': qtf})
 
     def idf_query(self, query):
         qtf = [0] * len(self.vocabulary)
         for query_term in query:
-            index_in_vocabulary = self.vocabulary.index(query_term)
-            qtf[index_in_vocabulary] = math.log10(self.N / self.index[query_term].count)
+            try:
+                index_in_vocabulary = self.vocabulary.index(query_term)
+                qtf[index_in_vocabulary] = math.log10(self.N / self.index[query_term].count)
+            except ValueError:
+                # Fails if the query term is not present in the vocabulary
+                pass
         return pd.DataFrame({'query': qtf})
 
     def tfidf_query(self, query: list[str]):
         return self.tf_query(query) * self.idf_query(query)
-

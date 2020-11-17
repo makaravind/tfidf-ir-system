@@ -9,8 +9,8 @@ import nltk
 from nltk.corpus import stopwords
 
 
-def only_words(tokens: list[str]):
-    return [word for word in tokens if word.isalpha()]
+# def only_words(tokens: list[str]):
+#     return [word for word in tokens if word.isalpha()]
 
 
 # case insensitive stop words removal
@@ -83,8 +83,9 @@ class DocToTerms:
         return hashlib.sha256(self.name.encode('utf-8')).hexdigest()
 
 
-def query(query):
-    return tokenize(query, [only_words, no_stopwords, lemmatize])
+def query(query_str):
+    query_str = normalize(query_str)
+    return tokenize(query_str, [no_stopwords, lemmatize])
 
 
 class Preprocessor:
@@ -94,13 +95,13 @@ class Preprocessor:
      - text is first normalized according clinical terms, tokenized and then different processing functions are according to the xml block type
     """
     xml_paths = [
-        XMLBlockProcessor('brief_title', [only_words, no_stopwords, lemmatize]),
-        XMLBlockProcessor('official_title', [only_words, no_stopwords, lemmatize]),
-        XMLBlockProcessor('./brief_summary/textblock', [only_words, no_stopwords, lemmatize]),
+        XMLBlockProcessor('brief_title', [no_stopwords, lemmatize]),
+        XMLBlockProcessor('official_title', [no_stopwords, lemmatize]),
+        XMLBlockProcessor('./brief_summary/textblock', [no_stopwords, lemmatize]),
         XMLBlockProcessor('./location_countries/country'),
-        XMLBlockProcessor('./detailed_description/textblock', [only_words, no_stopwords, lemmatize]),
+        XMLBlockProcessor('./detailed_description/textblock', [no_stopwords, lemmatize]),
         XMLBlockProcessor('phase'),
-        XMLBlockProcessor('./intervention/description', [only_words, no_stopwords, lemmatize]),
+        XMLBlockProcessor('./intervention/description', [no_stopwords, lemmatize]),
         XMLBlockProcessor('./intervention/intervention_type', [intervention_type_other]),
         XMLBlockProcessor('condition'),
         XMLBlockProcessor('keyword')
