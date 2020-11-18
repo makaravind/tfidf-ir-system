@@ -27,13 +27,16 @@ using the meta folder.
 #### Step 1
 - Tokenization
     - tags extracted from XML
-        - keyword
-        - condition
-        - brief_title
-        - official_title
-        - brief_summary
-        - detailed_description
-        - location_countries
+        1.	brief_title 
+        2.	official_title
+        3.	brief_summary
+        4.	location_countries/country
+        5.	detailed_description
+        6.	Phase
+        7.	intervention/description
+        8.	intervention/intervention_type
+        9.	Condition
+        10.	Keyword
 - Remove stop words
 - Perform normalization (covid -- covid19)
 
