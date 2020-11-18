@@ -1,5 +1,6 @@
 import pickle
 import os
+import pandas as pd
 
 
 def save_obj(obj, name):
@@ -10,6 +11,14 @@ def save_obj(obj, name):
 def load_obj(name):
     with open('meta/' + name + '.pkl', 'rb') as f:
         return pickle.load(f)
+
+
+def save_pandas_df_as_pickle(df, name):
+    df.to_pickle('meta/' + name + '.pkl')
+
+
+def load_pickle_as_pandas_df(name):
+    return pd.read_pickle('meta/' + name + '.pkl')
 
 
 def is_saved(name):

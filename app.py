@@ -7,6 +7,7 @@ import util
 
 INVERTED_INDEX_FILE_NAME = 'inverted_index'
 DOC_ID_NAME_INDEX_NAME = 'doc_id_name_index'
+TFIDF_NAME_INDEX_NAME = 'tfidf'
 
 
 def build_index():
@@ -23,7 +24,13 @@ def build_index():
     print('Indexing completed')
     util.save_obj(doc_id_name_index, DOC_ID_NAME_INDEX_NAME)
     util.save_obj(inverted_index, INVERTED_INDEX_FILE_NAME)
-    print('Saved index for quick results for future queries')
+
+    tf_idf_ranker = ranker.Ranker(inverted_index, doc_id_name_index)
+    _tfidf = tf_idf_ranker.tfidf()
+    util.save_pandas_df_as_pickle(_tfidf, TFIDF_NAME_INDEX_NAME)
+
+
+print('Saved index for quick results for future queries')
 
 
 def load_index():
@@ -31,17 +38,18 @@ def load_index():
         build_index()
     else:
         print('Found cached indexes! Using them ;)')
-    return [util.load_obj(INVERTED_INDEX_FILE_NAME), util.load_obj(DOC_ID_NAME_INDEX_NAME)]
+    _inverted_index: dict[str, indexer.Posting] = util.load_obj(INVERTED_INDEX_FILE_NAME)
+    _doc_id_name_index: dict[int, str] = util.load_obj(DOC_ID_NAME_INDEX_NAME)
+    _tfidf = util.load_pickle_as_pandas_df(TFIDF_NAME_INDEX_NAME)
+    return {
+        'tfidf': _tfidf,
+        'inverted': _inverted_index,
+        'did_name': _doc_id_name_index
+    }
 
 
 print('Loading...')
-indexes = load_index()
-
-_inverted_index: dict[str, indexer.Posting] = indexes[0]
-_doc_id_name_index: dict[int, str] = indexes[1]
-tf_idf_ranker = ranker.Ranker(_inverted_index, _doc_id_name_index)
-_tfidf = tf_idf_ranker.tfidf()
-
+index = load_index()
 print('Ready...(type exit to terminate)')
 
 while True:
@@ -53,9 +61,10 @@ while True:
 
     print('...')
     normalize_query: list[str] = preprocessing.query(query)
-    _tfidf_query = tf_idf_ranker.tfidf_query(normalize_query)
+    tf_idf_ranker_q = ranker.Ranker(index['inverted'], index['did_name'])
+    _tfidf_query = tf_idf_ranker_q.tfidf_query(normalize_query)
 
-    document_results: [int, float] = ranker.top_10_relevant_documents(_tfidf, _tfidf_query)
-    document_results = [{'document_name': _doc_id_name_index[d_id[0]], 'similarity_score': d_id[1]} for d_id in document_results]
+    document_results: [int, float] = ranker.top_10_relevant_documents(index['tfidf'], _tfidf_query)
+    document_results = [{'document_name': index['did_name'][d_id[0]], 'similarity_score': d_id[1]} for d_id in document_results]
     print('Matching documents for the query - ', query)
     util.print_result(document_results)
