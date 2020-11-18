@@ -21,20 +21,19 @@ def build_index():
     indexer_ob = indexer.Indexer(doc_to_terms)
     inverted_index: dict[str, indexer.Posting] = indexer_ob.inverter_index()
     doc_id_name_index: dict[int, str] = indexer_ob.doc_id_to_doc_name_index()
-    print('Indexing completed')
-    util.save_obj(doc_id_name_index, DOC_ID_NAME_INDEX_NAME)
-    util.save_obj(inverted_index, INVERTED_INDEX_FILE_NAME)
 
     tf_idf_ranker = ranker.Ranker(inverted_index, doc_id_name_index)
     _tfidf = tf_idf_ranker.tfidf()
+
+    print('Indexing completed..saving...')
+    util.save_obj(doc_id_name_index, DOC_ID_NAME_INDEX_NAME)
+    util.save_obj(inverted_index, INVERTED_INDEX_FILE_NAME)
     util.save_pandas_df_as_pickle(_tfidf, TFIDF_NAME_INDEX_NAME)
-
-
-print('Saved index for quick results for future queries')
+    print('Saved index for quick results for future queries')
 
 
 def load_index():
-    if not util.is_saved(INVERTED_INDEX_FILE_NAME) and not util.is_saved(DOC_ID_NAME_INDEX_NAME):
+    if not util.is_saved(INVERTED_INDEX_FILE_NAME) and not util.is_saved(DOC_ID_NAME_INDEX_NAME) and not util.is_saved(TFIDF_NAME_INDEX_NAME):
         build_index()
     else:
         print('Found cached indexes! Using them ;)')
