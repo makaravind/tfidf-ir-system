@@ -45,7 +45,7 @@ def print_result(document_results, source):
         print(f"""Attempted to find top 10 documents but only found {scores_gt_zero} documents relevant to the query""")
 
 
-def get_corpus_dir_path():
+def get_corpus_dir_path_from_args():
     if len(sys.argv) < 1:
         raise Exception('Clinical trails Data file directory path should be supplied to build the index')
     return sys.argv[1]

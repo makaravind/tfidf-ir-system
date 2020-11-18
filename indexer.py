@@ -32,6 +32,7 @@ class Indexer:
     def __init__(self, doc_to_terms: list[preprocessing.DocToTerms]):
         self.docToTerms = doc_to_terms
 
+    # Creates a lexicographic sorted inverted index
     def inverter_index(self):
         print('building inverted index')
         inverted_index: dict[str, Posting] = dict()

@@ -9,7 +9,7 @@ TFIDF_NAME_INDEX_NAME = 'tfidf'
 
 
 def build_index():
-    corpus_path = util.get_corpus_dir_path()
+    corpus_path = util.get_corpus_dir_path_from_args()
     preprocessor = preprocessing.Preprocessor(corpus_path)
     doc_to_terms: list[preprocessing.DocToTerms] = preprocessor.parse()
 
@@ -27,8 +27,10 @@ def build_index():
     print('Saved index for quick results for future queries')
 
 
+# Index files are used from meta/ else re created and saved for future purpose
 def load_index():
-    if not util.is_saved(INVERTED_INDEX_FILE_NAME) and not util.is_saved(DOC_ID_NAME_INDEX_NAME) and not util.is_saved(TFIDF_NAME_INDEX_NAME):
+    if not util.is_saved(INVERTED_INDEX_FILE_NAME) and not util.is_saved(DOC_ID_NAME_INDEX_NAME) and not util.is_saved(
+        TFIDF_NAME_INDEX_NAME):
         build_index()
     else:
         print('Found cached indexes! Using them ;)')
@@ -61,4 +63,4 @@ while True:
     document_results: [int, float] = ranker.top_10_relevant_documents(index['tfidf'], _tfidf_query)
     document_results = [{'document_name': index['did_name'][d_id[0]], 'similarity_score': d_id[1]} for d_id in document_results]
     print('Matching documents for the query - ', query)
-    util.print_result(document_results, util.get_corpus_dir_path())
+    util.print_result(document_results, util.get_corpus_dir_path_from_args())

@@ -1,16 +1,12 @@
 import hashlib
 import re
-from nltk.stem import WordNetLemmatizer
 import xml.etree.ElementTree as ET
 from os import listdir
 from os.path import isfile, join, isdir
 
 import nltk
 from nltk.corpus import stopwords
-
-
-# def only_words(tokens: list[str]):
-#     return [word for word in tokens if word.isalpha()]
+from nltk.stem import WordNetLemmatizer
 
 
 # case insensitive stop words removal
@@ -37,6 +33,7 @@ def intervention_type_other(tokens):
 
 # converts standard strings to processable string without special character, stop words
 def normalize(text):
+    # Phase values normalization is performed according to clinical trails standard for phase nomenclature
     text = re.sub(r'Early Phase 1', 'EarlyPhase1', text)
     text = re.sub(r'Phase 1/Phase 2', 'Phase1Phase2', text)
     text = re.sub(r'Phase 2/Phase 3', 'Phase2Phase3', text)
@@ -118,17 +115,19 @@ class Preprocessor:
 
         all_doc_to_terms: list[DocToTerms] = []
         for doc_id, file_name in enumerate(data_files):
-            xml_tree = ET.parse(join(self.source, file_name))
-            all_tokens = []
-            for data_block in self.xml_paths:
-                for child in xml_tree.getroot().findall(data_block.xml_path):
-                    if child is not None:
-                        print(f"""Processing file: {join(self.source, file_name)}, block: {data_block.xml_path}""")
-                        #  merging results from all data blocks in to one doc corpus
-                        all_tokens = all_tokens + data_block.tokens(child.text)
-
-            # unique_terms = set(all_tokens)
+            all_tokens = self.get_tokens_from_doc(file_name)
             print('all token extracted from file', len(all_tokens))
             all_doc_to_terms.append(DocToTerms(file_name, all_tokens))
 
         return all_doc_to_terms
+
+    def get_tokens_from_doc(self, file_name):
+        xml_tree = ET.parse(join(self.source, file_name))
+        all_tokens = []
+        for data_block in self.xml_paths:
+            for child in xml_tree.getroot().findall(data_block.xml_path):
+                if child is not None:
+                    print(f"""Processing file: {join(self.source, file_name)}, block: {data_block.xml_path}""")
+                    #  merging results from all data blocks in to one doc corpus
+                    all_tokens = all_tokens + data_block.tokens(child.text)
+        return all_tokens
