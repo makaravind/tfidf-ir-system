@@ -1,7 +1,5 @@
-import sys
-
-import preprocessing
 import indexer
+import preprocessing
 import ranker
 import util
 
@@ -11,10 +9,7 @@ TFIDF_NAME_INDEX_NAME = 'tfidf'
 
 
 def build_index():
-    if len(sys.argv) < 1:
-        raise Exception('Clinical trails Data file directory path should be supplied to build the index')
-
-    corpus_path = sys.argv[1]
+    corpus_path = util.get_corpus_dir_path()
     preprocessor = preprocessing.Preprocessor(corpus_path)
     doc_to_terms: list[preprocessing.DocToTerms] = preprocessor.parse()
 
@@ -66,4 +61,4 @@ while True:
     document_results: [int, float] = ranker.top_10_relevant_documents(index['tfidf'], _tfidf_query)
     document_results = [{'document_name': index['did_name'][d_id[0]], 'similarity_score': d_id[1]} for d_id in document_results]
     print('Matching documents for the query - ', query)
-    util.print_result(document_results)
+    util.print_result(document_results, util.get_corpus_dir_path())
