@@ -5,6 +5,7 @@
 - Create a folder meta in the application root directory, This is where the indexes cached for quick queries!
 - Run app.py
        - python3 app.py <path-to-data-file-dir>
+       - Eg. python3 app.py test-data
 - On querying, Application attempts to return top 10 relevant documents with their titles, filename, similarity score
        
 ### Data set files and index construction
