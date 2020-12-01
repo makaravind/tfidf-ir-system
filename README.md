@@ -1,8 +1,15 @@
 ## IR System - TFIDF Implementation to search relevant covid19 clinical trails
 
+### Prerequisties
+- Python Version - 3.9.x
+- Recommendation (Optional)
+	- Create a virtual environment for python 3.9 incase you have a different version installed using the below command
+		- ```conda create --name py39 python=3.9```
+- Install dependencies using the following command (`Requirements.txt` is in the root folder)
+	- ```pip install -r requirements.txt```
+
+
 ### Running the application
-- Python >3
-- Create a folder meta in the application root directory, This is where the indexes cached for quick queries!
 - Run app.py
        - python3 app.py <path-to-data-file-dir>
        - Eg. python3 app.py test-data
@@ -17,7 +24,7 @@ Use the link below to download the original dataset and delete the index files i
 using the meta folder.
 1. Original dataset (3095 files) - https://drive.google.com/drive/folders/1UaO7pIfw8eSMYnussKsNpG6yeT9UmCva?usp=sharing
 
-### Additional Libraries Dependencies
+### Libraries Dependencies
 - nltk
     - punkt
     - wordnet
