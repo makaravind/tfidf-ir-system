@@ -7,6 +7,7 @@
 		- ```conda create --name py39 python=3.9```
 - Install dependencies using the following command (`Requirements.txt` is in the root folder)
 	- ```pip install -r requirements.txt```
+- Create a folder meta in the application root directory, This is where the indexes cached for quick queries!
 
 
 ### Running the application
