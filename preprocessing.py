@@ -3,12 +3,11 @@ import re
 import xml.etree.ElementTree as ET
 from os import listdir
 from os.path import isfile, join, isdir
-
 import nltk
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
-
-
+nltk.download('stopwords')
+nltk.download('wordnet')
 # case insensitive stop words removal
 def no_stopwords(tokens: list[str]):
     stop_words = set([s.upper() for s in stopwords.words('english')])
@@ -112,7 +111,7 @@ class Preprocessor:
             raise Exception("Source path should be directory with data files")
 
         data_files = [f for f in listdir(self.source) if isfile(join(self.source, f))]
-
+        
         all_doc_to_terms: list[DocToTerms] = []
         for doc_id, file_name in enumerate(data_files):
             all_tokens = self.get_tokens_from_doc(file_name)
